@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'backend/**'
+      - 'starter/backend/**'
       - '.github/workflows/backend-ci.yaml'
   pull_request:
     paths:
-      - 'backend/**'
+      - 'starter/backend/**'
       - '.github/workflows/backend-ci.yaml'
   workflow_dispatch:
 
@@ -26,11 +26,12 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        working-directory: backend
+        working-directory: starter/backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run backend tests
-        working-directory: backend
+        working-directory: starter/backend
         run: pytest
+
