@@ -1,42 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
-function MovieList({ onSelectMovie }) {
+function MovieList({ onMovieClick }) {
   const [movies, setMovies] = useState([]);
-  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/movies')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch movies');
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        setMovies(data.movies);
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
+    axios.get(`${process.env.REACT_APP_MOVIE_API_URL}/movies`).then((response) => {
+      setMovies(response.data.movies);
+    });
   }, []);
 
-  if (error) {
-    return <p style={{ color: 'red' }}>Error: {error}</p>;
-  }
-
   return (
-    <div>
+    <ul>
       {movies.map((movie) => (
-        <div key={movie.id}>
-          <h2>{movie.title}</h2>
-          <p>Movie ID: {movie.id}</p>
-
-          <button onClick={() => onSelectMovie(movie)}>Click for details →</button>
-        </div>
+        <li className="movieItem" key={movie.id} onClick={() => onMovieClick(movie)}>
+          {movie.title}
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
+
+MovieList.propTypes = {
+  onMovieClick: PropTypes.func.isRequired,
+};
 
 export default MovieList;
