@@ -1,60 +1,37 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import axios from 'axios';
 import MovieList from '../MovieList';
 
-beforeEach(() => {
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          movies: [
-            {
-              id: 123,
-              title: 'Top Gun: Maverick',
-            },
-            {
-              id: 456,
-              title: 'Sonic the Hedgehog',
-            },
-            {
-              id: 789,
-              title: 'A Quiet Place',
-            },
-          ],
-        }),
-    })
-  );
-});
+jest.mock('axios');
 
-afterEach(() => {
-  jest.restoreAllMocks();
-});
+const mockMovies = [
+  { id: 1, title: 'Movie 1' },
+  { id: 2, title: 'Movie 2' },
+];
 
 test('renders movie titles', async () => {
-  render(<MovieList onSelectMovie={jest.fn()} />);
+  axios.get.mockResolvedValueOnce({ data: { movies: mockMovies } });
 
-  const movie1 = await screen.findByText('Top Gun: Maverick');
-  const movie2 = await screen.findByText('Sonic the Hedgehog');
-  const movie3 = await screen.findByText('A Quiet Place');
+  const onMovieClick = jest.fn();
+  render(<MovieList onMovieClick={onMovieClick} />);
+
+  const movie1 = await screen.findByText(/Movie 1/);
+  const movie2 = await screen.findByText(/Movie 2/);
 
   expect(movie1).toBeInTheDocument();
   expect(movie2).toBeInTheDocument();
-  expect(movie3).toBeInTheDocument();
 });
 
-test('calls onSelectMovie when movie details button is clicked', async () => {
-  const onSelectMovie = jest.fn();
+test('calls onMovieClick when movie is clicked', async () => {
+  axios.get.mockResolvedValueOnce({ data: { movies: mockMovies } });
 
-  render(<MovieList onSelectMovie={onSelectMovie} />);
+  const onMovieClick = jest.fn();
+  render(<MovieList onMovieClick={onMovieClick} />);
 
-  const buttons = await screen.findAllByRole('button', {
-    name: /Click for details/i,
-  });
+  const movie1 = await screen.findByText(/Movie 1/);
 
-  fireEvent.click(buttons[0]);
+  fireEvent.click(movie1);
 
-  expect(onSelectMovie).toHaveBeenCalledWith({
-    id: 123,
-    title: 'Top Gun: Maverick',
-  });
+  expect(onMovieClick).toHaveBeenCalledWith(mockMovies[0]);
 });
