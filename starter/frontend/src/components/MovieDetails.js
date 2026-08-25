@@ -1,50 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function MovieDetails({ movie, onClose }) {
+function MovieDetail({ movie }) {
   const [details, setDetails] = useState(null);
-  const [error, setError] = useState('');
-
   useEffect(() => {
-    if (!movie || !movie.id) {
-      return;
-    }
-
-    axios
-      .get(`http://127.0.0.1:5000/movies/${movie.id}`)
-      .then((response) => {
-        setDetails(response.data.movie);
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
+    axios.get(`${process.env.REACT_APP_MOVIE_API_URL}/movies/${movie.id}`).then((response) => {
+      setDetails(response.data);
+    });
   }, [movie]);
-
-  if (!movie) {
-    return null;
-  }
-
-  if (error) {
-    return (
-      <div>
-        <p style={{ color: 'red' }}>Error: {error}</p>
-        <button onClick={onClose}>Close</button>
-      </div>
-    );
-  }
-
-  if (!details) {
-    return <p>Loading movie details...</p>;
-  }
 
   return (
     <div>
-      <h2>{details.title}</h2>
-      <p>{details.description}</p>
-
-      <button onClick={onClose}>Close</button>
+      <h2>{details?.movie.title}</h2>
+      <p>{details?.movie.description}</p>
     </div>
   );
 }
 
-export default MovieDetails;
+export default MovieDetail;
