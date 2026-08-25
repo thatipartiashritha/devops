@@ -130,7 +130,7 @@ jobs:
       - name: Update frontend image
         working-directory: starter/frontend/k8s
         run: |
-          sed -i "s|image:.*|image: 384315945467.dkr.ecr.us-east-1.amazonaws.com/frontend:${{ github.sha }}|" frontend-deployment.yaml
+          sed -i "s|image:.*|image: 728281364418.dkr.ecr.us-east-1.amazonaws.com/frontend:${{ github.sha }}|" frontend-deployment.yaml
 
       - name: Deploy to EKS
         working-directory: starter/frontend/k8s
