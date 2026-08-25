@@ -1,10 +1,7 @@
 from flask import Blueprint
 from .resources import Movies
-
 movies_api = Blueprint("movies_api", __name__)
-
 movies = Movies.as_view("movies")
-
 movies_api.add_url_rule(
     "/movies",
     strict_slashes=False,
